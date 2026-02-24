@@ -19,4 +19,16 @@ if vim.g.neovide == true then
 	vim.g.neovide_padding_bottom = 0
 	vim.g.neovide_padding_right = 0
 	vim.g.neovide_padding_left = 0
+
+	-- Animations
+	vim.g.neovide_position_animation_length = 0.05 -- default 0.15
+	vim.g.neovide_scroll_animation_length = 0.075 --default 0.3
+	vim.g.neovide_scroll_animation_far_lines = 1 --default 1
+	vim.g.neovide_cursor_animation_length = 0.03 --default 0.150
+	vim.g.neovide_cursor_short_animation_length = 0.01 --default 0.04
+	vim.g.neovide_cursor_trail_size = 0.3 --default 1.0
+	vim.g.neovide_cursor_animate_in_insert_mode = true --default true
+	vim.g.neovide_cursor_smooth_blink = false -- default false
+	vim.g.neovide_cursor_unfocused_outline_width = 0 --default 0.125
+	vim.g.neovide_cursor_animate_command_line = true --default true
 end

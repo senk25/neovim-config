@@ -39,7 +39,7 @@ vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
 vim.keymap.set("n", "<C-l>", ":bnext<CR>", opts)
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
 vim.keymap.set("n", "<C-h>", ":bprevious<CR>", opts)
-vim.keymap.set("n", "<leader>d", ":bdelete!<CR>", opts) -- close buffer
+vim.keymap.set("n", "<leader>d", ":bp<bar>vsp<bar>bn<bar>bd<CR>", opts) -- close buffer
 vim.keymap.set("n", "<leader>b", "<cmd> enew <CR>", opts) -- new buffer
 
 -- Window management
@@ -49,7 +49,6 @@ vim.keymap.set("n", "<leader>se", "<C-w>=", opts) -- make split windows equal wi
 vim.keymap.set("n", "<leader>x", ":close<CR>", opts) -- close current split window
 
 -- Navigate between splits
---vim.keymap.set("n", "<S-k>", ":wincmd k<CR>", opts)
 vim.keymap.set("n", "<S-j>", ":wincmd j<CR>", opts)
 vim.keymap.set("n", "<S-h>", ":wincmd h<CR>", opts)
 vim.keymap.set("n", "<S-l>", ":wincmd l<CR>", opts)
@@ -71,9 +70,21 @@ vim.keymap.set("v", "p", '"_dP', opts)
 -- Diagnostic keymaps
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
---vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
 --vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
 vim.keymap.set("i", "<C-BS>", "<C-w>", opts)
 
 vim.keymap.set("n", "<leader>a", "*", opts)
+
+vim.keymap.set({ "v", "n" }, "<S-j>", "<Nop>", opts)
+
+-- Exit terminal mode
+vim.keymap.set("t", "<C-j>", "<C-\\><C-n>", opts)
+
+-- Don't dec/increment numbers
+vim.keymap.set("n", "<C-a>", "<Nop>", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-x>", "<Nop>", { noremap = true, silent = true })
+
+vim.g.omni_sql_no_default_maps=1
+

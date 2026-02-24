@@ -106,9 +106,6 @@ return {
 							event.buf
 						)
 					then
-						if client.name == "clangd" then
-							client.stop(client)
-						end
 						local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 							buffer = event.buf,
@@ -190,26 +187,29 @@ return {
 			--  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
 			--  - settings (table): Override the default settings passed when initializing the server.
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+
 			local vue_language_server_path = vim.fn.stdpath("data")
 				.. "/mason/packages/vue-language-server/node_modules/@vue/language-server"
 
+			vim.notify(vue_language_server_path)
+
+			-- local vue_plugin = {
+			-- 	name = "@vue/typescript-plugin",
+			-- 	location = vue_language_server_path,
+			-- 	languages = { "vue" },
+			-- 	configNamespace = "typescript",
+			-- 	enableForWorkspaceTypeScriptVersions = true,
+			-- }
+
 			local vue_plugin = {
 				name = "@vue/typescript-plugin",
-				location = vue_language_server_path,
+				location = vim.fn.expand("$MASON/packages/vue-language-server/node_modules/@vue/language-server"),
 				languages = { "vue" },
 				configNamespace = "typescript",
 				enableForWorkspaceTypeScriptVersions = true,
 			}
-			local vtsls_config = {
-				init_options = {
-					plugins = {
-						vue_plugin,
-					},
-				},
-				filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
-			}
 
-			local vstsconfig = {
+			local vtsls_config = {
 				filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
 				settings = {
 					vtsls = { tsserver = { globalPlugins = {} } },
@@ -225,15 +225,7 @@ return {
 					},
 				},
 				before_init = function(_, config)
-					table.insert(config.settings.vtsls.tsserver.globalPlugins, {
-						name = "@vue/typescript-plugin",
-						location = vim.fn.expand(
-							"$MASON/packages/vue-language-server/node_modules/@vue/language-server"
-						),
-						languages = { "vue" },
-						configNamespace = "typescript",
-						enableForWorkspaceTypeScriptVersions = true,
-					})
+					table.insert(config.settings.vtsls.tsserver.globalPlugins, vue_plugin)
 				end,
 				on_attach = function(client)
 					client.server_capabilities.documentFormattingProvider = false
@@ -243,38 +235,43 @@ return {
 
 			local vue_ls_config = {
 				on_init = function(client)
-					--	client.handlers["tsserver/request"] = function(_, result, context)
-					--		local clients = vim.lsp.get_clients({ bufnr = context.bufnr, name = "vtsls" })
-					--		if #clients == 0 then
-					--			vim.notify(
-					--				"Could not found `vtsls` lsp client, vue_lsp would not work without it.",
-					--				vim.log.levels.ERROR
-					--			)
-					--			return
-					--		end
-					--		local ts_client = clients[1]
-					--		local param = unpack(result)
-					--		local id, command, payload = unpack(param)
-					--		ts_client:exec_cmd({
-					--			command = "typescript.tsserverRequest",
-					--			arguments = {
-					--				command,
-					--				payload,
-					--			},
-					--		}, { bufnr = context.bufnr }, function(_, r)
-					--			local response_data = { { id, r.body } }
-					--			---@diagnostic disable-next-line: param-type-mismatch
-					--			client:notify("tsserver/response", response_data)
-					--		end)
-					--	end
+					client.handlers["tsserver/request"] = function(_, result, context)
+						local clients = vim.lsp.get_clients({ bufnr = context.bufnr, name = "vtsls" })
+						if #clients == 0 then
+							vim.notify(
+								"Could not found `vtsls` lsp client, vue_lsp would not work without it.",
+								vim.log.levels.ERROR
+							)
+							return
+						end
+						local ts_client = clients[1]
+						local param = unpack(result)
+						local id, command, payload = unpack(param)
+						ts_client:exec_cmd({
+							command = "typescript.tsserverRequest",
+							arguments = {
+								command,
+								payload,
+							},
+						}, { bufnr = context.bufnr }, function(_, r)
+							local response_data = { { id, r.body } }
+							---@diagnostic disable-next-line: param-type-mismatch
+							client:notify("tsserver/response", response_data)
+						end)
+					end
 				end,
 			}
+
+			-- Sets config for vue stuff
+			vim.lsp.config("vtsls", vtsls_config)
+			vim.lsp.config("vue_ls", vue_ls_config)
+			vim.lsp.enable({ "vtsls", "vue_ls" })
 
 			local servers = {
 				clangd = {},
 				-- gopls = {},
 				pyright = {},
-				-- rust_analyzer = {},
+				rust_analyzer = {},
 				-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 				--
 				-- Some languages (like typescript) have entire language plugins that can be useful:
@@ -282,7 +279,6 @@ return {
 				--
 				html = {},
 				cssls = {},
-				eslint = {},
 				lua_ls = {
 					-- cmd = { ... },
 					filetypes = { "lua" },
@@ -294,6 +290,16 @@ return {
 							},
 							-- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
 							-- diagnostics = { disable = { 'missing-fields' } },
+						},
+					},
+				},
+				matlab_ls = {
+					filetypes = { "matlab" },
+					settings = {
+						matlab = {
+							installPath = "C:\\Program Files\\MATLAB\\R2023b",
+							workspaceIndex = true,
+							telemetry = false,
 						},
 					},
 				},
@@ -314,17 +320,10 @@ return {
 			local ensure_installed = vim.tbl_keys(servers or {})
 			vim.list_extend(ensure_installed, {
 				"stylua",
-				"prettierd",
-				"eslint_d",
+				-- "prettierd",
+				-- "eslint_d",
 			})
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
-
-			--			local lspconfig = require("lspconfig")
-			--			lspconfig.vtsls.setup(vtsls_config)
-			--			lspconfig.vue_ls.setup(vue_ls_config)
-			vim.lsp.config("vtsls", vstsconfig)
-			vim.lsp.config("vue_ls", vue_ls_config)
-			vim.lsp.enable({ "vtsls", "vue_ls" })
 
 			require("mason-lspconfig").setup({
 				ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)

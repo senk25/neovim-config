@@ -9,8 +9,10 @@ vim.o.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in se
 vim.o.smartcase = true -- Smart case (default: false)
 vim.o.shiftwidth = 4 -- The number of spaces inserted for each indentation (default: 8)
 vim.o.tabstop = 4 -- Insert n spaces for a tab (default: 8)
-vim.o.softtabstop = 4 -- Number of spaces that a tab counts for while performing editing operations (default: 0)
+vim.o.softtabstop = 0 -- Number of spaces that a tab counts for while performing editing operations (default: 0)
 vim.o.expandtab = true -- Convert tabs to spaces (default: false)
+-- vim.o.expandtab = false -- Convert tabs to spaces (default: false)
+vim.g.python_recommended_style=0
 vim.o.scrolloff = 4 -- Minimal number of screen lines to keep above and below the cursor (default: 0)
 vim.o.sidescrolloff = 8 -- Minimal number of screen columns either side of cursor if wrap is `false` (default: 0)
 vim.o.cursorline = false -- Highlight the current line (default: false)
@@ -42,3 +44,4 @@ vim.opt.iskeyword:append("-") -- Hyphenated words recognized by searches (defaul
 vim.opt.formatoptions:remove({ "c", "r", "o" }) -- Don't insert the current comment leader automatically for auto-wrapping comments using 'textwidth', hitting <Enter> in insert mode, or hitting 'o' or 'O' in normal mode. (default: 'croql')
 vim.o.cmdheight = 1 -- Hide cmd line
 vim.wo.conceallevel = 2
+vim.o.shell = "powershell.exe"
