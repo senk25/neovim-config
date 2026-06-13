@@ -45,3 +45,4 @@ vim.opt.formatoptions:remove({ "c", "r", "o" }) -- Don't insert the current comm
 vim.o.cmdheight = 1 -- Hide cmd line
 vim.wo.conceallevel = 2
 vim.o.shell = "powershell.exe"
+vim.opt.readonly = false
