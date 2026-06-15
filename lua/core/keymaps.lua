@@ -49,9 +49,10 @@ vim.keymap.set("n", "<leader>se", "<C-w>=", opts) -- make split windows equal wi
 vim.keymap.set("n", "<leader>x", ":close<CR>", opts) -- close current split window
 
 -- Navigate between splits
-vim.keymap.set("n", "<S-j>", ":wincmd j<CR>", opts)
-vim.keymap.set("n", "<S-h>", ":wincmd h<CR>", opts)
-vim.keymap.set("n", "<S-l>", ":wincmd l<CR>", opts)
+vim.keymap.set("n", "<S-h>", "<C-w>h", opts)
+vim.keymap.set("n", "<S-j>", "<C-w>j", opts)
+vim.keymap.set("n", "<S-k>", "<C-w>k", opts)
+vim.keymap.set("n", "<S-l>", "<C-w>l", opts)
 
 -- Tabs
 vim.keymap.set("n", "<leader>to", ":tabnew<CR>", opts) -- open new tab
@@ -73,11 +74,7 @@ vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnos
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
 --vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
-vim.keymap.set("i", "<C-BS>", "<C-w>", opts)
-
 vim.keymap.set("n", "<leader>a", "*", opts)
-
-vim.keymap.set({ "v", "n" }, "<S-j>", "<Nop>", opts)
 
 -- Exit terminal mode
 vim.keymap.set("t", "<C-j>", "<C-\\><C-n>", opts)
